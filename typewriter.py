@@ -15,17 +15,18 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-# --- Define the 4 sound files ---
+# --- Define the 5 sound files (added 'space') ---
 sound_files = {
     'default': 'default.mp3',
     'enter': 'enter.mp3',
     'backspace': 'backspace.mp3',
-    'capslock': 'capslock.mp3'
+    'capslock': 'capslock.mp3',
+    'space': 'space.mp3'  # <-- NEW SPACE SOUND
 }
 
 # --- Load all sounds and create channels for each ---
 sounds = {}
-channels = {}  # This stores a separate channel for each sound
+channels = {}
 
 for name, filename in sound_files.items():
     file_path = resource_path(filename)
@@ -33,12 +34,9 @@ for name, filename in sound_files.items():
         print(f"ERROR: Cannot find {filename}!")
         print(f"Looking in: {file_path}")
         sys.exit(1)
-    sounds[name] = pygame.mixer.Sound(file_path)  
-    # Find a free channel for this sound
+    sounds[name] = pygame.mixer.Sound(file_path)
     channels[name] = pygame.mixer.find_channel()
-    # If no channel is free, pygame will auto-create one, so this is safe
     if channels[name] is None:
-        # Fallback: just use the default channel behavior
         channels[name] = pygame.mixer.Channel(0)
     print(f"Loaded: {filename}")
 
@@ -47,21 +45,17 @@ print("  GLOBAL TYPEWRITER SOUNDS ACTIVATED!    ")
 print("  - ENTER       -> enter.mp3             ")
 print("  - BACKSPACE   -> backspace.mp3         ")
 print("  - CAPSLOCK    -> capslock.mp3          ")
+print("  - SPACE       -> space.mp3             ")  # <-- NEW
 print("  - ALL OTHERS  -> default.mp3           ")
 print("  Press 'ESC' to stop the program.       ")
 print("=========================================")
 
 # --- Helper function to play sound without overlapping ---
 def play_sound(name):
-    """Plays a sound, stopping any previous playback of that same sound."""
     sound = sounds[name]
     channel = channels[name]
-    
-    # If this sound is currently playing, stop it first
     if channel.get_busy():
         channel.stop()
-    
-    # Play the sound from the beginning
     channel.play(sound)
 
 # --- This runs every time you press a key ---
@@ -79,6 +73,8 @@ def on_press(e):
         play_sound('backspace')
     elif e.name == 'caps lock' or e.name == 'caps_lock':
         play_sound('capslock')
+    elif e.name == 'space':  # <-- NEW SPACE CHECK
+        play_sound('space')
     else:
         play_sound('default')
 
