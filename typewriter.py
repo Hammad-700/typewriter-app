@@ -33,7 +33,7 @@ for name, filename in sound_files.items():
         print(f"ERROR: Cannot find {filename}!")
         print(f"Looking in: {file_path}")
         sys.exit(1)
-    sounds[name] = pygame.mixer.Sound(file_path)
+    sounds[name] = pygame.mixer.Sound(file_path)  
     # Find a free channel for this sound
     channels[name] = pygame.mixer.find_channel()
     # If no channel is free, pygame will auto-create one, so this is safe
